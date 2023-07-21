@@ -1,0 +1,23 @@
+<%= form_with(model: page) do |form| %>
+  <%= render "shared/error_messages", resource: form.object %>
+
+  <div class="form-group">
+    <%= form.label :title, class: "form-label" %>
+    <%= form.text_field :title, class: "form-field" %>
+  </div>
+
+  <div class="form-group">
+    <%= form.label :domain, class: "form-label" %>
+    <%= form.text_field :domain, class: "form-field" %>
+  </div>
+
+  <div class="form-group">
+    <%= form.label :content, class: "form-label" %>
+    <%= form.text_area :content, rows: 10, class: "form-field", data: { controller: "autosize" } %>
+  </div>
+
+  <div>
+    <%= link_to "Cancel", page.new_record? ? pages_root_path : page_path(page), class: "btn btn-secondary" %>
+    <%= form.submit page.new_record? ? "Create page" : "Save page", class: "btn btn-primary" %>
+  </div>
+<% end %>

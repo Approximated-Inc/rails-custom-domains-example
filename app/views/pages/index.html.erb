@@ -1,0 +1,23 @@
+<header class="flex items-center">
+  <h1 class="text-4xl font-bold grow">Pages</h1>
+
+  <div class="shrink-0">
+    <%= link_to "New page", new_page_path, class: "btn btn-primary" %>
+  </div>
+</header>
+
+<main class="mt-6">
+  <% if @pages.any? %>
+    <ul class="bg-white rounded-lg border border-gray-200 divide-y divide-gray-200 overflow-hidden">
+      <% @pages.each do |page| %>
+        <li>
+          <%= link_to page.title, page_path(page), class: "block p-4 font-bold hover:bg-gray-100" %>
+        </li>
+      <% end %>
+    </ul>
+  <% else %>
+    <div class="text-gray-600">
+      No pages
+    </div>
+  <% end %>
+</main>

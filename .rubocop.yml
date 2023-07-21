@@ -1,0 +1,20 @@
+require:
+  - rubocop-rails
+  - rubocop-performance
+  - rubocop-minitest
+  - rubocop-capybara
+
+AllCops:
+  NewCops: enable
+
+Minitest/MultipleAssertions:
+  Enabled: false
+
+Metrics:
+  Enabled: false
+
+Rails/I18nLocaleTexts:
+  Enabled: false
+
+Style/Documentation:
+  Enabled: false

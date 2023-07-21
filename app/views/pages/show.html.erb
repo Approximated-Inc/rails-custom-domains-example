@@ -1,0 +1,25 @@
+<header>
+  <h1 class="text-4xl font-bold"><%= @page.title %></h1>
+</header>
+
+<main class="mt-6">
+  <%= render "shared/error_messages", resource: @page %>
+
+  <p>
+    <strong>Domain:</strong>
+    <%= link_to @page.domain, public_pages_root_url(host: @page.domain, port: nil),
+                target: "_blank", class: "underline" %>
+  </p>
+
+  <div class="prose max-w-none mt-6">
+    <%= simple_format @page.content %>
+  </div>
+
+  <div class="mt-6">
+    <%= link_to "Back to pages", pages_root_path, class: "btn btn-secondary" %>
+    <%= link_to "Edit this page", edit_page_path(@page), class: "btn btn-primary" %>
+    <%= link_to "Destroy this page", @page, class: "btn btn-danger", data: {
+      turbo_confirm: "Are you sure?", turbo_method: :delete
+    } %>
+  </div>
+</main>

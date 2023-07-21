@@ -1,0 +1,60 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .alert {
+    @apply relative border px-4 py-3 mb-6 rounded;
+  }
+
+  .alert-dismissible {
+    @apply pr-10;
+  }
+
+  .alert-close {
+    @apply absolute top-0 right-0 px-4 py-3;
+  }
+
+  .alert-red {
+    @apply bg-red-100 border-red-400 text-red-700;
+  }
+
+  .alert-blue {
+    @apply bg-blue-100 border-blue-400 text-blue-700;
+  }
+
+  .btn {
+    @apply inline-block rounded-md px-3 py-2 text-sm font-semibold ring-1 ring-inset
+    focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2;
+  }
+
+  .btn-primary {
+    @apply bg-blue-600 text-white ring-transparent focus-visible:outline-blue-600 hover:bg-blue-500;
+  }
+
+  .btn-danger {
+    @apply bg-red-600 text-white ring-transparent focus-visible:outline-red-600 hover:bg-red-500;
+  }
+
+  .btn-secondary {
+    @apply bg-white text-gray-900 ring-gray-300 focus-visible:outline-gray-500 hover:bg-gray-100;
+  }
+
+  .form-group {
+    @apply block w-full mb-4;
+  }
+
+  .form-label {
+    @apply block w-full mb-1;
+  }
+
+  .field_with_errors .form-label {
+    @apply text-red-600;
+  }
+
+  .form-field {
+    @apply block leading-tight w-full mb-1 py-2 px-3 bg-white rounded border
+    border-gray-300 focus:outline-none focus:ring focus:ring-blue-300
+    disabled:bg-gray-100 disabled:text-gray-600 disabled:cursor-default;
+  }
+}

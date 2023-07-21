@@ -1,0 +1,8 @@
+<% if flash.notice %>
+  <div data-controller="alert">
+    <div role="alert" data-alert-target="alert" class="alert alert-dismissible alert-blue">
+      <button type="button" class="alert-close" data-action="alert#dismiss" title="Close">&times;</button>
+      <%= flash.notice %>
+    </div>
+  </div>
+<% end %>

@@ -1,6 +1,12 @@
-Rails.application.routes.draw do
-  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
+# frozen_string_literal: true
 
-  # Defines the root path route ("/")
-  # root "articles#index"
+Rails.application.routes.draw do
+  constraints AppDomainConstraint do
+    root 'pages#index', as: :pages_root
+    resources :pages, except: %i[index]
+  end
+
+  constraints !AppDomainConstraint do
+    root 'public_pages#show', as: :public_pages_root
+  end
 end

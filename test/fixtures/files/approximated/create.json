@@ -1,0 +1,9 @@
+{
+  "data": {
+    "id": 445922,
+    "incoming_address": "incoming.com",
+    "target_address": "target.com",
+    "target_ports": "443",
+    "user_message": "In order to connect your domain, you'll need to have a DNS A record that points acustomdomain.com at 213.188.210.168. If you already have an A record for that address, please change it to point at 213.188.210.168 and remove any other A records for that exact address. It may take a few minutes for your SSL certificate to take effect once you've pointed your DNS A record."
+  }
+}
