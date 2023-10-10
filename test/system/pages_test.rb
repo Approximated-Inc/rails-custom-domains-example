@@ -15,7 +15,7 @@ class PagesTest < ApplicationSystemTestCase
 
   def test_show
     visit pages_root_url
-    click_on pages(:one).title
+    click_link pages(:one).title
 
     assert_selector 'h1', text: pages(:one).title
   end
@@ -29,13 +29,13 @@ class PagesTest < ApplicationSystemTestCase
     )
 
     visit pages_root_url
-    click_on 'New page'
+    click_link 'New page'
 
     fill_in 'Title', with: 'My New Page'
     fill_in 'Content', with: 'My new page content'
     fill_in 'Domain', with: 'my-new-page.com'
 
-    click_on 'Create page'
+    click_button 'Create page'
 
     assert_text <<~MESSAGE.squish
       In order to connect your domain, you'll need to have a DNS A record that points acustomdomain.com
@@ -58,13 +58,13 @@ class PagesTest < ApplicationSystemTestCase
     )
 
     visit page_url(pages(:one))
-    click_on 'Edit this page'
+    click_link 'Edit this page'
 
     fill_in 'Title', with: 'My Updated Page'
     fill_in 'Content', with: 'My updated page content'
     fill_in 'Domain', with: 'my-updated-page.com'
 
-    click_on 'Save page'
+    click_button 'Save page'
 
     assert_text 'Page was successfully updated.'
     assert_selector 'h1', text: 'My Updated Page'
@@ -76,7 +76,7 @@ class PagesTest < ApplicationSystemTestCase
     visit page_url(pages(:one))
 
     accept_confirm do
-      click_on 'Destroy this page'
+      click_link 'Destroy this page'
     end
 
     assert_text 'Page was successfully destroyed.'
