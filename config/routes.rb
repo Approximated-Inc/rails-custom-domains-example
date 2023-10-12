@@ -9,4 +9,6 @@ Rails.application.routes.draw do
   constraints !AppDomainConstraint do
     root 'public_pages#show', as: :public_pages_root
   end
+
+  get 'up' => 'rails/health#show', as: :rails_health_check
 end
