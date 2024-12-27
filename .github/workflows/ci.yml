@@ -7,30 +7,81 @@ on:
     branches: [ main ]
 
 jobs:
-  test:
-    name: Test
-
+  scan_ruby:
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
     steps:
       - name: Check out code
-        uses: actions/checkout@v3
-        
+        uses: actions/checkout@v4
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+
+      - name: Run brakeman
+        run: bin/brakeman --no-pager
+
+  scan_js:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+
+      - name: Run importmap audit
+        run: bin/importmap audit
+
+  lint:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
 
       - name: Run rubocop
-        run: bundle exec rubocop --parallel
+        run: bin/rubocop -f github
+
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+        
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
 
       - name: Set up database
-        run: bundle exec rails db:setup
+        run: bin/rails db:test:prepare
         env:
           RAILS_ENV: test
 
       - name: Run tests
-        run: bundle exec rails test:all
+        run: bin/rails test test:system
         env:
           RAILS_ENV: test
+
+      - name: Keep screenshots from failed system tests
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: screenshots
+          path: ${{ github.workspace }}/tmp/screenshots
+          if-no-files-found: ignore

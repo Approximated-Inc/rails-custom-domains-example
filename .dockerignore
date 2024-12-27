@@ -2,12 +2,16 @@
 
 # Ignore git directory.
 /.git/
+/.gitignore
+
+# Ignore CI service files.
+/.github
 
 # Ignore bundler config.
 /.bundle
 
-# Ignore environment variables.
-/.env
+# Ignore all environment files.
+/.env*
 
 # Ignore all default key files.
 /config/master.key
@@ -36,3 +40,11 @@
 /app/assets/builds/*
 !/app/assets/builds/.keep
 /public/assets
+
+# Ignore Kamal files.
+/config/deploy*.yml
+/.kamal
+
+# Ignore Docker-related files.
+/.dockerignore
+/Dockerfile*
