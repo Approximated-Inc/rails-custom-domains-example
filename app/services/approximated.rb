@@ -62,8 +62,10 @@ class Approximated
   # @raise [Approximated::ResourceNotFound] If the virtual host could not be found.
   #
   def get_vhost(incoming_address)
+    encoded_incoming_address = URI.encode_www_form_component(incoming_address)
+
     handle_exceptions do
-      response = connection.get("/api/vhosts/by/incoming/#{incoming_address}")
+      response = connection.get("/api/vhosts/by/incoming/#{encoded_incoming_address}")
       handle_response(response)
     end
   end
@@ -78,8 +80,10 @@ class Approximated
   # @raise [Approximated::ResourceNotFound] If the virtual host could not be found.
   #
   def delete_vhost(incoming_address)
+    encoded_incoming_address = URI.encode_www_form_component(incoming_address)
+
     handle_exceptions do
-      response = connection.delete("/api/vhosts/by/incoming/#{incoming_address}")
+      response = connection.delete("/api/vhosts/by/incoming/#{encoded_incoming_address}")
       handle_response(response)
     end
   end

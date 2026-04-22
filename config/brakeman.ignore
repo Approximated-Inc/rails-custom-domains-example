@@ -1,0 +1,29 @@
+{
+  "ignored_warnings": [
+    {
+      "warning_type": "SQL Injection",
+      "warning_code": 0,
+      "fingerprint": "62db75d7b86bb8d2a36221646a31abf7c4e909f09cc63bdccae377ca123793dd",
+      "check_name": "SQL",
+      "message": "Possible SQL injection",
+      "file": "app/services/approximated.rb",
+      "line": 86,
+      "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
+      "code": "connection.delete(\"/api/vhosts/by/incoming/#{URI.encode_www_form_component(incoming_address)}\")",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "Approximated",
+        "method": "delete_vhost"
+      },
+      "user_input": "URI.encode_www_form_component(incoming_address)",
+      "confidence": "Medium",
+      "cwe_id": [
+        89
+      ],
+      "note": ""
+    }
+  ],
+  "updated": "2024-12-27 14:44:44 +0100",
+  "brakeman_version": "6.2.2"
+}
