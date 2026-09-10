@@ -1,0 +1,13 @@
+atlas:
+  id: 1
+  slug: atlas
+  name: Atlas Press
+  headline: Field notes for curious teams
+  body: Independent essays about products, places, and the people who make them.
+
+juniper:
+  id: 2
+  slug: juniper
+  name: Juniper Journal
+  headline: Small stories, carefully published
+  body: A quiet publishing space for studio updates, interviews, and useful ideas.

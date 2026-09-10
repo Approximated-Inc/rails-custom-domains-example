@@ -1,11 +1,16 @@
 # frozen_string_literal: true
 
-# This file should ensure the existence of records required to run the application in every environment (production,
-# development, test). The code here should be idempotent so that it can be executed at any point in every environment.
-# The data can then be loaded with the bin/rails db:seed command (or created alongside the database with db:setup).
-#
-# Example:
-#
-#   ["Action", "Comedy", "Drama", "Horror"].each do |genre_name|
-#     MovieGenre.find_or_create_by!(name: genre_name)
-#   end
+tenants = [
+  { slug: 'atlas', name: 'Atlas Press', headline: 'Field notes for curious teams',
+    body: 'Independent essays about products, places, and the people who make them.' },
+  { slug: 'juniper', name: 'Juniper Journal', headline: 'Small stories, carefully published',
+    body: 'A quiet publishing space for studio updates, interviews, and useful ideas.' }
+]
+
+tenants.each do |attributes|
+  tenant = Tenant.find_or_initialize_by(slug: attributes.fetch(:slug))
+  tenant.update!(attributes)
+  domain = tenant.custom_domains.find_or_initialize_by(hostname: "#{tenant.slug}.test")
+  domain.update!(lifecycle: 'fixture', status: 'local fixture', provider_id: nil,
+                 is_resolving: nil, apx_hit: nil, has_ssl: nil)
+end

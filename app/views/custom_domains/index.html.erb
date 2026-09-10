@@ -1,0 +1,46 @@
+<header class="toolbar">
+  <div class="grow">
+    <p class="muted">Signed in as <%= current_tenant.name %></p>
+    <h1>Custom domains</h1>
+  </div>
+  <%= button_to "Sign out", session_path, method: :delete, class: "btn btn-secondary" %>
+</header>
+
+<main class="stack">
+  <% if Approximated.mode == :mock %>
+    <section class="card" role="status">
+      <strong>Local demo mode</strong>
+      <p class="muted">Domain setup and readiness are simulated in this process. No request is sent to Approximated.</p>
+    </section>
+  <% end %>
+
+  <section class="card">
+    <h2>Add a domain</h2>
+    <%= form_with url: custom_domains_path, class: "inline-form" do |form| %>
+      <div class="field"><%= form.label :hostname, class: "form-label" %><%= form.text_field :hostname, placeholder: "www.customer.com", class: "form-field", required: true %></div>
+      <%= form.submit "Connect", class: "btn btn-primary" %>
+    <% end %>
+  </section>
+
+  <section>
+    <h2>Reservations</h2>
+    <div class="stack">
+      <% @custom_domains.each do |domain| %>
+        <article class="card">
+          <div class="toolbar">
+            <div class="grow">
+              <h3><%= domain.hostname %></h3>
+              <p class="muted"><%= domain.lifecycle.humanize %> · <%= domain.status %></p>
+              <p>Origin response: <%= domain.is_resolving.nil? ? 'checking' : (domain.is_resolving ? 'received' : 'not received') %> · Approximated hit: <%= domain.apx_hit.nil? ? 'checking' : (domain.apx_hit ? 'yes' : 'no') %> · TLS: <%= domain.has_ssl.nil? ? 'checking' : (domain.has_ssl ? 'ready' : 'not ready') %></p>
+              <% if domain.user_message.present? %><p><%= domain.user_message %></p><% end %>
+            </div>
+            <% if %w[active removal_pending].include?(domain.lifecycle) %>
+              <%= button_to "Refresh", refresh_custom_domain_path(domain), class: "btn btn-secondary" %>
+              <%= button_to(domain.lifecycle == 'removal_pending' ? 'Retry removal' : 'Remove', custom_domain_path(domain), method: :delete, class: "btn btn-danger") %>
+            <% end %>
+          </div>
+        </article>
+      <% end %>
+    </div>
+  </section>
+</main>

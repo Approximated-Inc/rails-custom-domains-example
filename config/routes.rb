@@ -1,12 +1,15 @@
 # frozen_string_literal: true
 
 Rails.application.routes.draw do
-  constraints AppDomainConstraint do
-    root 'pages#index', as: :pages_root
-    resources :pages, except: %i[index]
+  constraints ControlHostConstraint do
+    root 'custom_domains#index', as: :control_root
+    resource :session, only: %i[new create destroy]
+    resources :custom_domains, only: %i[create destroy] do
+      post :refresh, on: :member
+    end
   end
 
-  constraints !AppDomainConstraint do
+  constraints ->(request) { !ControlHostConstraint.matches?(request) } do
     root 'public_pages#show', as: :public_pages_root
   end
 

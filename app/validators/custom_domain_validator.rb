@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class CustomDomainValidator < ActiveModel::EachValidator
-  RESERVED_DOMAINS = [ENV.fetch('APP_PRIMARY_DOMAIN')].freeze
+  RESERVED_DOMAINS = [ENV.fetch('CONTROL_HOST', 'localhost')].freeze
 
   def validate_each(record, attribute, value)
     return if value.blank?

@@ -1,10 +1,20 @@
-/*
- * This is a manifest file that'll be compiled into application.css.
- *
- * With Propshaft, assets are served efficiently without preprocessing steps. You can still include
- * application-wide styles in this file, but keep in mind that CSS precedence will follow the standard
- * cascading order, meaning styles declared later in the document or manifest will override earlier ones,
- * depending on specificity.
- *
- * Consider organizing styles into separate files for maintainability.
- */
+* { box-sizing: border-box; }
+body { margin: 0; color: #172033; background: #f7f8fa; font: 16px/1.55 system-ui, sans-serif; }
+a { color: #2459d3; }
+.container { width: min(900px, calc(100% - 2rem)); margin: 3rem auto; }
+.public-container { width: min(760px, calc(100% - 2rem)); margin: 5rem auto; }
+.toolbar { display: flex; align-items: center; gap: 1rem; }
+.grow { flex: 1; }
+.stack { display: grid; gap: 1rem; }
+.card { padding: 1.25rem; border: 1px solid #d9dee8; border-radius: .75rem; background: white; }
+.muted { color: #667085; }
+.btn { display: inline-block; padding: .6rem .9rem; border: 1px solid #b8c0cf; border-radius: .5rem; background: white; color: #172033; font-weight: 650; cursor: pointer; }
+.btn-primary { border-color: #2459d3; background: #2459d3; color: white; }
+.btn-danger { border-color: #b42318; background: #b42318; color: white; }
+.form-label { display: block; margin-bottom: .35rem; font-weight: 650; }
+.form-field { width: 100%; padding: .65rem .75rem; border: 1px solid #b8c0cf; border-radius: .5rem; background: white; }
+.inline-form { display: flex; gap: .75rem; align-items: end; }
+.inline-form .field { flex: 1; }
+.alert { padding: .8rem 1rem; margin-bottom: 1rem; border-radius: .5rem; }
+.alert-red { color: #7a271a; background: #fef3f2; border: 1px solid #fecdca; }
+.alert-blue { color: #1849a9; background: #eff8ff; border: 1px solid #b2ddff; }

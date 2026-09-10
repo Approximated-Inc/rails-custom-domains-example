@@ -1,0 +1,17 @@
+services:
+  web:
+    build: .
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      RAILS_LOG_TO_STDOUT: "1"
+      SECRET_KEY_BASE_DUMMY: "1"
+    command: ["./bin/rails", "server", "-b", "0.0.0.0", "-p", "3086"]
+    ports:
+      - "127.0.0.1:${PORT:-3086}:3086"
+    volumes:
+      - rails_storage:/rails/storage
+
+volumes:
+  rails_storage:

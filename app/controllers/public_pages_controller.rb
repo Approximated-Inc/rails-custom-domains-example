@@ -4,12 +4,10 @@ class PublicPagesController < ApplicationController
   layout 'public'
 
   def show
-    @page = Page.find_by!(domain: requested_host)
-  end
-
-  private
-
-  def requested_host
-    request.headers['apx-incoming-host'].presence || request.host
+    domain = CustomDomain.routable.includes(:tenant).find_by!(hostname: RequestedHost.call(request))
+    @tenant = domain.tenant
+    response.headers['Cache-Control'] = 'private, no-store'
+  rescue DomainName::Invalid, ActiveRecord::RecordNotFound
+    head :not_found
   end
 end

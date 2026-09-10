@@ -37,6 +37,7 @@
 
 # Ignore assets.
 /node_modules/
+/vendor/bundle/
 /app/assets/builds/*
 !/app/assets/builds/.keep
 /public/assets

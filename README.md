@@ -1,68 +1,88 @@
 # Rails Custom Domains Example
 
-This is an example repo to help you understand how you could implement custom domains easily as a feature
-in your Rails application using [Approximated](https://approximated.app).
+A two-tenant publishing demo for adding custom domains to a Rails 8.1 application with [Approximated](https://approximated.app). The refresh shown here targets Ruby 4.0.6 and Rails 8.1.3.1.
 
+## Versions
 
-## How it works
+- Current Rails 8.1 example: [`guide-rails8.1-r1`](https://github.com/Approximated-Inc/rails-custom-domains-example/tree/guide-rails8.1-r1)
+- Legacy Rails 8.0 example: [`guide-legacy-2026-09`](https://github.com/Approximated-Inc/rails-custom-domains-example/tree/guide-legacy-2026-09)
 
-The core unit of this application is a Page model. It consists of a title, a simple textual content, and a custom
-domain. The application provides a simple user interface to manage these Pages, syncs the changes to Approximated
-and displays the Page on the specified custom domain.
+## What the demo proves
 
-When a Page with a custom domain is created, the application will create a virtual host in Approximated and provide
-instructions to set a DNS record for the domain. When a Page is changed, it'll update the virtual host and when
-it's destroyed, it'll delete the virtual host.
+- `atlas.test` and `juniper.test` resolve to separate SQLite tenants.
+- The management surface runs only on `CONTROL_HOST` and derives the tenant from an encrypted Rails session.
+- Domain input is normalized before a globally unique reservation is created.
+- A blank API key uses a clearly labeled process-local mock. A nonempty key uses the fixed Approximated cloud API, and credentials remain server-side.
+- Provider records are confirmed and later addressed by their stored provider ID.
+- Public routing requires a confirmed active record with an Approximated traffic hit and TLS readiness. Explicit `.test` fixtures are the only bypass.
+- Removal keeps the local mapping disabled until a provider GET by ID returns 404.
 
-The flow of an incoming request is as follows:
-- The request hits the router.
-- The router checks if the requested domain matches the application primary domain specified as an env variable
-  `APP_PRIMARY_DOMAIN`.
-- If the requested domain matches the application domain, it routes the request to the `PagesController`
-  and shows the management of Pages.
-- If it doesn't match the application domain, it routes the request to the `PublicPagesController`.
-- The `PublicPagesController` tries to find a Page with the requested custom domain based on either
-  the request header `apx-incoming-host` or the request host.
-- If a Page with this custom domain is found, it'll render the public site for the Page.
-- If the requested domain doesn't match a custom domain in the database or the primary domain, it shows 404.
+This is an integration example. The development login is deliberately disabled outside development and test. Production authentication belongs in the host application.
 
+## Setup
 
-## Files to check out
+Install Ruby 4.0.6 and Bundler 4.0.16, then run:
 
-- [config/routes.rb](config/routes.rb) -
-  Rails routing for the main application and public pages with custom domains.
-- [app/constraints/app_domain_constraint.rb](app/constraints/app_domain_constraint.rb) - 
-  Route constraint to differentiate between primary domain and custom domains.
-- [app/controllers/pages_controller.rb](app/controllers/pages_controller.rb) -
-  Controller for managing pages.
-- [app/controllers/public_pages_controller.rb](app/controllers/public_pages_controller.rb) -
-  Controller handling custom domains.
-- [app/models/page.rb](app/models/page.rb) -
-  Page model with callbacks managing Approximated virtual hosts.
-- [app/services/approximated.rb](app/services/approximated.rb) -
-  Service for talking to the Approximated API.
-- [app/views/layouts/application.html.erb](app/views/layouts/application.html.erb) -
-  View layout for main application.
-- [app/views/layouts/public.html.erb](app/views/layouts/public.html.erb) -
-  View layout for public pages on custom domains.
+```sh
+bundle install
+cp .env.example .env
+bin/rails db:prepare db:seed
+bin/rails server -b 127.0.0.1 -p 3086
+```
 
+Leave `APPROXIMATED_API_KEY` blank for local work. The dashboard shows **Local demo mode**, and domains you add use an in-process mock without making an external request. Open the control app through `http://localhost:3086`, sign in with tenant slug `atlas` or `juniper` and the `DEMO_LOGIN_PASSWORD`, then exercise the publishing hosts:
 
-## Trying it out
+```sh
+curl --resolve atlas.test:3086:127.0.0.1 http://atlas.test:3086/
+curl --resolve juniper.test:3086:127.0.0.1 http://juniper.test:3086/
+```
 
-1. Copy the `.env.example` file to `.env`.
-2. Set the `APP_PRIMARY_DOMAIN` in `.env` to your local dev domain (e.g. `localhost`).
-3. Set the `APPROXIMATED_API_KEY` in `.env` to your API key from the Approximated dashboard.
-4. Run `bundle install`, `bin/rails db:setup` and `bin/dev` from the project root folder.
-5. Open the application in your browser and create a Page. Fill in your local domain
-   (e.g. `localhost`) as a custom domain.
-6. To test the custom domain in a local environment, change the `APP_PRIMARY_DOMAIN` in the `.env` file
-   to anything else temporarily. This makes the router not match your local domain as the primary domain,
-   so it'll handle it as a custom domain. 
-7. Restart the web server and reload the page. You should see a public site for your Page. 
-8. To get back to the main app dashboard again, just change the `APP_PRIMARY_DOMAIN` back.
+To use the real integration, set only `APPROXIMATED_API_KEY` and `APP_ORIGIN_HOST`; a nonempty key selects `https://cloud.approximated.app`. Set `APPROXIMATED_MODE=mock` when you deliberately want the local mock even though a key is present. The mock is process-local, so restart it whenever you want a clean simulated provider state.
 
+The production-like container path publishes only on loopback:
 
-## Assets and CORS
+```sh
+cp .env.example .env
+docker compose build
+docker compose run --rm web bin/rails db:prepare db:seed
+docker compose up
+```
 
-These work out of the box in this example app, because their paths are relative. If your app is linking
-to assets with absolute URLs, changing them to relative paths should fix any CORS issues.
+`compose.yaml` binds `127.0.0.1:${PORT:-3086}` on the host to port 3086 in the container. Put a deliberate reverse proxy in front of it before exposing the service elsewhere.
+
+## Verification
+
+```sh
+APPROXIMATED_MODE=mock bin/rails db:test:prepare
+APPROXIMATED_MODE=mock bin/rails test
+APPROXIMATED_MODE=mock bin/rails zeitwerk:check
+APPROXIMATED_MODE=mock RAILS_ENV=production SECRET_KEY_BASE_DUMMY=1 bin/rails assets:precompile
+APPROXIMATED_MODE=mock PORT=3086 scripts/smoke.sh
+```
+
+Start the server and seed the database before running the smoke script. See [AGENTS.md](AGENTS.md) for the file map and invariants that coding agents must preserve.
+
+## Lifecycle and trust boundaries
+
+The browser never chooses a tenant ID. `CustomDomainsController` scopes every lookup to `current_tenant`, which comes from the encrypted session. A normalized hostname has one reservation across all tenants.
+
+An API timeout or ambiguous error leaves that reservation `unconfirmed`, without a provider ID. It is not routable and cannot be refreshed or removed automatically. A successful create stores the returned provider ID only after the response hostname matches the reservation. Refresh and delete then use `/api/vhosts/{id}`. A refresh accepts a response only when both its ID and hostname still match the reservation, and its conditional write also matches the original tenant, local ID, hostname, provider ID, and lifecycle so a delayed response cannot alter a replacement.
+
+`is_resolving` says an HTTP response was observed. `apx_hit` separately says the request reached Approximated, and `has_ssl` reports TLS readiness. Real public routing requires the latter two values to be strictly true. The mock returns simulated ready values so you can exercise the complete local flow, and its dashboard banner keeps those results visibly separate from live checks.
+
+## Main files
+
+- `app/models/custom_domain.rb` — persistence, validation, and fail-closed routing scope.
+- `app/services/domain_name.rb` — hostname normalization and rejection rules.
+- `app/services/approximated.rb` — fixed-origin HTTP adapter, environment factory, and process-local mock.
+- `app/services/domain_lifecycle.rb` — reservation, confirmation, refresh, and removal state transitions.
+- `app/controllers/custom_domains_controller.rb` — tenant-scoped management actions.
+- `app/controllers/public_pages_controller.rb` — host lookup and tenant publishing response.
+- `config/routes.rb` — control-host and public-host route split.
+- `compose.yaml` — production-like container with loopback-only host publishing.
+- `test/services/approximated_http_test.rb` — loopback HTTP contract tests.
+- `test/services/domain_lifecycle_test.rb` — identity and deletion-race regressions.
+
+## JSON compatibility pin
+
+Rails 8.1.3.1 currently decodes encrypted cookie sessions through the JSON 2.x positional parse API. `json` 3.0.2 changed that call shape and caused session decoding to raise `ArgumentError`; the suite passed after pinning the current JSON 2.x release, 2.21.2. Keep the pin until Rails or the JSON integration removes that incompatibility.

@@ -1,0 +1,16 @@
+<main>
+  <h1>Local fixture login</h1>
+  <p>Choose one seeded tenant. This login is disabled outside development and test.</p>
+
+  <%= form_with url: session_path, class: "stack" do |form| %>
+    <div class="field">
+      <%= form.label :tenant_slug, "Tenant", class: "form-label" %>
+      <%= form.select :tenant_slug, Tenant.order(:name).pluck(:name, :slug), {}, class: "form-field" %>
+    </div>
+    <div class="field">
+      <%= form.label :password, class: "form-label" %>
+      <%= form.password_field :password, class: "form-field" %>
+    </div>
+    <%= form.submit "Sign in", class: "btn btn-primary" %>
+  <% end %>
+</main>

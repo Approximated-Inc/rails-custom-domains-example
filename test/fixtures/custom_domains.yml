@@ -1,0 +1,13 @@
+atlas_fixture:
+  id: 1
+  tenant_id: 1
+  hostname: atlas.test
+  lifecycle: fixture
+  status: local fixture
+
+juniper_fixture:
+  id: 2
+  tenant_id: 2
+  hostname: juniper.test
+  lifecycle: fixture
+  status: local fixture

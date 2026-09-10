@@ -2,10 +2,10 @@
 
 source 'https://rubygems.org'
 
-ruby '3.4.1'
+ruby '4.0.6'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails', branch: 'main'
-gem 'rails', '~> 8.0.0'
+gem 'rails', '8.1.3.1'
 
 # The modern asset pipeline for Rails [https://github.com/rails/propshaft]
 gem 'propshaft'
@@ -25,11 +25,11 @@ gem 'turbo-rails'
 # Hotwire's modest JavaScript framework [https://stimulus.hotwired.dev]
 gem 'stimulus-rails'
 
-# Use Tailwind CSS [https://github.com/rails/tailwindcss-rails]
-gem 'tailwindcss-rails'
-
 # Build JSON APIs with ease [https://github.com/rails/jbuilder]
 gem 'jbuilder'
+
+# Rails 8.1's encrypted cookie decoder still uses the JSON 2.x parse API.
+gem 'json', '2.21.2'
 
 # Use Redis adapter to run Action Cable in production
 gem 'redis'
@@ -45,6 +45,7 @@ gem 'bootsnap', require: false
 
 # Custom domain validation
 gem 'public_suffix'
+gem 'simpleidn'
 
 # HTTP client library
 gem 'faraday'
